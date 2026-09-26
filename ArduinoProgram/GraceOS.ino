@@ -59,10 +59,7 @@ bool botonPresionado(byte pin, bool &estadoAnterior) {
 }
 
 
-// =====================================================
-//                 ESTRUCTURA DEL MENÚ
-// =====================================================
-
+// Cada opcion del menu es un struct compuesto por un nombre y una funcion que seria la accion que se ejecuta al entrar a ese menu
 struct OpcionMenu {
 
   const char* nombre;
@@ -113,14 +110,12 @@ void abrirCentrifugado();
 void abrirConfiguracion();
 
 void iniciarLavado();
-void configurarTemperatura();
 void configurarTiempoLavado();
 
 void iniciarCentrifugado();
 void configurarRPM();
 void configurarTiempoCentrifugado();
 
-void calibrarSensor();
 void mostrarInformacion();
 
 void volverMenuAnterior();
@@ -152,9 +147,7 @@ OpcionMenu menuLavado[] = {
 
   {"Iniciar lavado", iniciarLavado},
 
-  {"Temperatura", configurarTemperatura},
-
-  {"Tiempo", configurarTiempoLavado}
+  {"Tiempo", configurarTiempoLavado}// En el caso que quiera hacer un lavado desde un tiempo especifico. Si no pone nada va a ser el tiempo configurado por defecto
 
 };
 
@@ -186,8 +179,7 @@ const byte cantidadMenuCentrifugado =
 
 OpcionMenu menuConfiguracion[] = {
 
-  {"Calibrar sensor", calibrarSensor},
-
+  {""}
   {"Informacion", mostrarInformacion}
 
 };
@@ -499,20 +491,6 @@ void iniciarLavado() {
 }
 
 
-void configurarTemperatura() {
-
-  pantalla.clear();
-
-  pantalla.setCursor(0, 0);
-  pantalla.print("Temperatura");
-
-  pantalla.setCursor(0, 1);
-  pantalla.print("40 C");
-
-  delay(1500);
-
-  mostrarMenu();
-}
 
 
 void configurarTiempoLavado() {
@@ -589,25 +567,6 @@ void configurarTiempoCentrifugado() {
 // =====================================================
 //                 CONFIGURACIÓN
 // =====================================================
-
-void calibrarSensor() {
-
-  pantalla.clear();
-
-  pantalla.setCursor(0, 0);
-  pantalla.print("Calibrando...");
-
-  delay(2000);
-
-  pantalla.clear();
-
-  pantalla.setCursor(0, 0);
-  pantalla.print("Calibracion OK");
-
-  delay(1500);
-
-  mostrarMenu();
-}
 
 
 void mostrarInformacion() {
