@@ -1,7 +1,8 @@
 #include <DIYables_LCD_I2C.h>
+#include <LiquidCrystal_AIP31068_I2C.h>
 #include <EEPROM.h>
-DIYables_LCD_I2C pantalla(0x27, 16, 2);
-
+//DIYables_LCD_I2C pantalla(0x27, 16, 2);
+LiquidCrystal_AIP31068_I2C pantalla(0x27,16,2);
 //Parametros de configuracion persistentes
 const uint16_t n_magic = 0xFAFA;
 struct Configuracion {
@@ -110,10 +111,11 @@ void abrirCentrifugado();
 void abrirConfiguracion();
 
 void iniciarLavado();
+void configurarRPMLavado();
 void configurarTiempoLavado();
 
 void iniciarCentrifugado();
-void configurarRPM();
+void configurarRPMCentrifugado();
 void configurarTiempoCentrifugado();
 
 void mostrarInformacion();
@@ -163,7 +165,7 @@ OpcionMenu menuCentrifugado[] = {
 
   {"Iniciar", iniciarCentrifugado},
 
-  {"RPM", configurarRPM},
+  {"RPM", configurarRPMCentrifugado},
 
   {"Tiempo", configurarTiempoCentrifugado}
 
@@ -179,7 +181,9 @@ const byte cantidadMenuCentrifugado =
 
 OpcionMenu menuConfiguracion[] = {
 
-  {""}
+  {"RPM Centrifugado", configurarRPMCentrifugado},
+  {"RPM Lavado", configurarRPMLavado},
+  {"Tiempo Centrifugado", configurarTiempoCentrifugado},
   {"Informacion", mostrarInformacion}
 
 };
@@ -205,7 +209,6 @@ MenuActual menuAnterior = MENU_PRINCIPAL;
 void setup() {
 
   pantalla.init();
-  pantalla.backlight();
 
   pinMode(BTN_ACEPTAR, INPUT_PULLUP);
   pinMode(BTN_DIRECCION, INPUT_PULLUP);
@@ -491,7 +494,20 @@ void iniciarLavado() {
 }
 
 
+void configurarRPMLavado() {
 
+  pantalla.clear();
+
+  pantalla.setCursor(0, 0);
+  pantalla.print("RPM");
+
+  pantalla.setCursor(0, 1);
+  pantalla.print("1200");
+
+  delay(1500);
+
+  mostrarMenu();
+}
 
 void configurarTiempoLavado() {
 
@@ -532,7 +548,7 @@ void iniciarCentrifugado() {
 }
 
 
-void configurarRPM() {
+void configurarRPMCentrifugado() {
 
   pantalla.clear();
 
@@ -555,12 +571,28 @@ void configurarTiempoCentrifugado() {
   pantalla.setCursor(0, 0);
   pantalla.print("Tiempo");
 
-  pantalla.setCursor(0, 1);
-  pantalla.print("10 min");
-
-  delay(1500);
-
+  while (!botonPresionado(BTN_DIRECCION,anteriorDireccion)){
+    pantalla.setCursor(0, 1);
+    pantalla.print(config.tiempo_centrifugado);
+    if (botonPresionado(BTN_ACEPTAR,anteriorAceptar)){
+      config.tiempo_centrifugado++;
+      pantalla.clear();
+      pantalla.setCursor(0,0);
+      pantalla.print("Tiempo");
+    }
+    if (botonPresionado(BTN_CANCELAR,anteriorCancelar)){
+      config.tiempo_centrifugado--;
+      pantalla.clear();
+      pantalla.setCursor(0,0);
+      pantalla.print("Tiempo");
+    }
+  }
   mostrarMenu();
+
+
+
+  //Esto se va a incrementar por cada pulsacion del boton y se tiene que guardar en la configuracion temporal al salir
+
 }
 
 
@@ -574,12 +606,12 @@ void mostrarInformacion() {
   pantalla.clear();
 
   pantalla.setCursor(0, 0);
-  pantalla.print("Lavadora v1.0");
+  pantalla.print("Drean GraceGold");
 
   pantalla.setCursor(0, 1);
-  pantalla.print("Arduino");
+  pantalla.print("GraceOS v0.1");
 
-  delay(2000);
+  delay(5000);
 
   mostrarMenu();
 }
