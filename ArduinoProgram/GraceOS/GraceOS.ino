@@ -555,6 +555,26 @@ void configurarRPMCentrifugado() {
   pantalla.setCursor(0, 0);
   pantalla.print("RPM");
 
+  while (!botonPresionado(BTN_DIRECCION,anteriorDireccion)){
+    pantalla.setCursor(0, 1);
+    pantalla.print(config.rpm_centrifugado);
+    if (botonPresionado(BTN_ACEPTAR,anteriorAceptar)){
+      if (config.rpm_centrifugado < 12000){
+        config.rpm_centrifugado = rpm_centrifugado + 100;
+      }
+      pantalla.clear();
+      pantalla.setCursor(0,0);
+      pantalla.print("RPM");
+    }
+    if (botonPresionado(BTN_CANCELAR,anteriorCancelar)){
+      if (config.rpm_centrifugado > 500){}
+        config.rpm_centrifugado = rpm_centrifugado - 100;
+      }
+      pantalla.clear();
+      pantalla.setCursor(0,0);
+      pantalla.print("RPM");
+    }
+  }
   pantalla.setCursor(0, 1);
   pantalla.print("1200");
 
