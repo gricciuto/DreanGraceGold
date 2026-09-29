@@ -1,8 +1,19 @@
 #include <DIYables_LCD_I2C.h>
 #include <LiquidCrystal_AIP31068_I2C.h>
 #include <EEPROM.h>
+#include </MotorController.h>
+
+// Config de pines
+
+const byte BTN_ACEPTAR   = 4;
+const byte BTN_DIRECCION = 5;
+const byte BTN_CANCELAR  = 2;
+const byte PIN_MOTOR     = 6;
+
+
 //DIYables_LCD_I2C pantalla(0x27, 16, 2);
 LiquidCrystal_AIP31068_I2C pantalla(0x27,16,2);
+MotorController motor(PIN_MOTOR);
 //Parametros de configuracion persistentes
 const uint16_t n_magic = 0xFAFA;
 struct Configuracion {
@@ -34,14 +45,6 @@ void cargarConfiguracion(){
     config = generarConfiguracionInicial();
   }
 }
-
-
-
-// Config de botones
-
-const byte BTN_ACEPTAR   = 4;
-const byte BTN_DIRECCION = 5;
-const byte BTN_CANCELAR  = 2;
 
 bool anteriorAceptar   = HIGH;
 bool anteriorDireccion = HIGH;
@@ -558,28 +561,19 @@ void configurarRPMCentrifugado() {
   while (!botonPresionado(BTN_DIRECCION,anteriorDireccion)){
     pantalla.setCursor(0, 1);
     pantalla.print(config.rpm_centrifugado);
-    if (botonPresionado(BTN_ACEPTAR,anteriorAceptar)){
-      if (config.rpm_centrifugado < 12000){
-        config.rpm_centrifugado = rpm_centrifugado + 100;
-      }
+    if (botonPresionado(BTN_ACEPTAR,anteriorAceptar) && config.rpm_centrifugado < 12000){
+      config.rpm_centrifugado = config.rpm_centrifugado + 100;
       pantalla.clear();
       pantalla.setCursor(0,0);
       pantalla.print("RPM");
     }
-    if (botonPresionado(BTN_CANCELAR,anteriorCancelar)){
-      if (config.rpm_centrifugado > 500){}
-        config.rpm_centrifugado = rpm_centrifugado - 100;
-      }
+    if (botonPresionado(BTN_CANCELAR,anteriorCancelar) && config.rpm_centrifugado > 500){
+      config.rpm_centrifugado = config.rpm_centrifugado - 100;
       pantalla.clear();
       pantalla.setCursor(0,0);
       pantalla.print("RPM");
     }
   }
-  pantalla.setCursor(0, 1);
-  pantalla.print("1200");
-
-  delay(1500);
-
   mostrarMenu();
 }
 
@@ -594,13 +588,13 @@ void configurarTiempoCentrifugado() {
   while (!botonPresionado(BTN_DIRECCION,anteriorDireccion)){
     pantalla.setCursor(0, 1);
     pantalla.print(config.tiempo_centrifugado);
-    if (botonPresionado(BTN_ACEPTAR,anteriorAceptar)){
+    if (botonPresionado(BTN_ACEPTAR,anteriorAceptar) && config.tiempo_centrifugado < 80){
       config.tiempo_centrifugado++;
       pantalla.clear();
       pantalla.setCursor(0,0);
       pantalla.print("Tiempo");
     }
-    if (botonPresionado(BTN_CANCELAR,anteriorCancelar)){
+    if (botonPresionado(BTN_CANCELAR,anteriorCancelar && config.tiempo_centrifugado > 5)){
       config.tiempo_centrifugado--;
       pantalla.clear();
       pantalla.setCursor(0,0);
